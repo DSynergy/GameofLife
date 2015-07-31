@@ -1,8 +1,8 @@
 Conway's Game of Life done in the command line via pure Ruby and TDD for funsies.
 
-To run in command line, insert the height and width and time of generation in seconds of the board via "ruby GameofLife.rb (height) (width) (seconds)". The board is randomly generated each time the game is run. 50x50 and .5 is a good start.
+After git cloning, to run in command line type "ruby GameofLife.rb". The board is randomly generated with each having a 50% chance of starting alive or dead each time the game is run.
 
-To run the tests, comment out the sleep runner at the bottom of the GameofLife
+To run the tests, comment out the runner at the bottom of the GameofLife
 
 An explanation can be found at wikipedia: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
 
