@@ -8,7 +8,7 @@ class Cell
 
   def alive?
     if @x >= 0 && @x < @game.width
-       @board[@x][@y] == 1 ? true : false
+       @board[@x][@y] == true ? true : false
     else
       nil
     end

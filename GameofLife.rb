@@ -2,12 +2,30 @@ require_relative 'cell'
 require 'colorize'
 
 class GameofLife
-  attr_reader :board, :width, :height
+  attr_reader :board,
+              :width,
+              :height,
+              :time,
+              :generations,
+              :population
 
-  def initialize(width=2, height=2)
-    @board ||= Array.new(width) {Array.new(height)}
+  def initialize
+    input
+    @board = Array.new(width) {Array.new(height)}
     @width = width
     @height = height
+    @population = 0
+    @time = time
+    @generations = 0
+  end
+
+  def input
+    p "Starting board height in cells? 50 is a good default"
+    @height = gets.chomp.to_i
+    p "Starting board width in cells? 50 is a good default"
+    @width = gets.chomp.to_i
+    p "Starting board time in seconds? 0.25 is a good default"
+    @time = gets.chomp.to_f
   end
 
   def randomly_generate_board
@@ -23,15 +41,15 @@ class GameofLife
   end
 
   def toggle_cell(x,y)
-    board[x][y] == nil || board[x][y] == 0 ? board[x][y] = 1 : board[x][y] = 0
+    board[x][y] == nil || board[x][y] == false ? board[x][y] = true : board[x][y] = false
   end
 
   def kill_cell(x,y)
-    board[x][y] = 0
+    board[x][y] = false
   end
 
   def birth_cell(x,y)
-    board[x][y] = 1
+    board[x][y] = true
   end
 
   def total_alive_neighbours(x,y)
@@ -48,26 +66,33 @@ class GameofLife
   end
 
   def run_game
-    board.each_with_index do |array, x|
-      array.each_with_index do |cell, y|
+    @population = 0
+    @generations +=1
+    board.each_with_index do |row, x|
+      row.each_with_index do |cell, y|
         check_underpopulation(x,y)
         check_overcrowding(x,y)
         check_reproduction(x,y)
       end
     end
+    check_total_population
+    print_game
+  end
 
-    puts "========================="
-    board.each_with_index do |row, row_index|
-      row.each_with_index do |cell, column_index|
-        if cell == 0
-          print  " "
+  def print_game
+    system "clear"
+    board.each_with_index do |row, x|
+      row.each_with_index do |cell, y|
+        if cell == false
+          print  "  "
         else
-          print "\e[32m#{'X'}\e[0m "
+          print "\e[32m#{'█'}\e[0m "
         end
       end
       puts
     end
-    puts "========================="
+    puts "Current Generation: #{@generations}"
+    puts "Current Population: #{@population}"
   end
 
   def check_underpopulation(x,y)
@@ -88,12 +113,22 @@ class GameofLife
     end
   end
 
+  def check_total_population
+    board.each_with_index do |row, x|
+      row.each_with_index do |cell, y|
+        if cell == true
+          @population += 1
+        end
+      end
+    end
+  end
+
 end
 
-game = GameofLife.new(ARGV[0].to_i, ARGV[1].to_i)
+#comment out code below to run tests
+game = GameofLife.new
 game.randomly_generate_board
-
 while true
   game.run_game
-  sleep(0.5)
+  sleep(game.time)
 end
